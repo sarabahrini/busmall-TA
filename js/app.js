@@ -2,14 +2,12 @@
 
 //global variable
 var allPictures = [];
-// var pic1 = [];
-// var pic2 = [];
-// var pic3 = [];
+var totalClicks = 0;
 
 //link JS to html
-var img1 = document.getElementById('img1');
-var img2 = document.getElementById('img2');
-var img3 = document.getElementById('img3');
+var img1 = document.createElement('img');
+var img2 = document.createElement('img');
+var img3 = document.createElement('img');
 var sectionEl = document.getElementById('clickerBox');
 var resultList = document.getElementById('voteResult');
 
@@ -20,77 +18,87 @@ function Pictures(url, name) {
     allPictures.push(this);
 }
 
+new Pictures("./img/bag.jpg", "bag");
+new Pictures("./img/banana.jpg", "banana");
+new Pictures("./img/bathroom.jpg", "bathroom");
+new Pictures("./img/boots.jpg", "boots");
+new Pictures("./img/breakfast.jpg", "breakfast");
+new Pictures("./img/bubblegum.jpg", "bubblegum");
+new Pictures("./img/chair.jpg", "chair");
+new Pictures("./img/cthulhu.jpg", "cthulhu");
+new Pictures("./img/dog-duck.jpg", "bag");
+new Pictures("./img/dragon.jpg", "dragon");
+new Pictures("./img/pen.jpg", "pen");
+new Pictures("./img/pet-sweep.jpg", "pet-sweep");
+new Pictures("./img/scissors.jpg", "scissors");
+new Pictures("./img/sweep.png", "sweep");
+new Pictures("./img/shark.jpg", "shark");
+new Pictures("./img/tauntaun.jpg", "tauntaun");
+new Pictures("./img/unicorn.jpg", "unicorn");
+new Pictures("./img/usb.gif", "usb");
+new Pictures("./img/water-can.jpg", "water-can");
+new Pictures("./img/wine-glass.jpg", "wine-glass");
 
-// displayed pic index numbers 
-var picIndex0 = 0;
-var picIndex1 = 0;
-var picIndex2 = 0;
+function getRandomPic(){
+    return Math.floor(Math.random() * allPictures.length);
+}
 
 function newPics() {
-    var cantBeThis = [picIndex0, picIndex1, picIndex2];
-    do {
-        picIndex0 = Math.floor(Math.random() * allPictures.length);
-    } while (cantBeThis.includes(picIndex0))
-    cantBeThis.push(picIndex0);
+    // displayed pic index numbers 
+    var picIndex0 = getRandomPic();
+    var picIndex1 = getRandomPic();
+    var picIndex2 = getRandomPic();
 
-    do {
-        picIndex1 = Math.floor(Math.random() * allPictures.length);
-    } while (cantBeThis.includes(picIndex1))
-    cantBeThis.push(picIndex1)
+    if(picIndex0 === picIndex1 || picIndex0 === picIndex2 || picIndex1 === picIndex2){
+        newPics();
+    }
+    img1.src = allPictures[picIndex0].url;
+    img1.alt = allPictures[picIndex0].name;
 
-    do {
-        picIndex2 = Math.floor(Math.random() * allPictures.length);
-    } while (cantBeThis.includes(picIndex2))
-    cantBeThis.push(picIndex2)
+    img2.src = allPictures[picIndex1].url;
+    img2.alt = allPictures[picIndex1].name;
+
+    img3.src = allPictures[picIndex2].url;
+    img3.alt = allPictures[picIndex2].name;
+    
+    sectionEl.appendChild(img1);
+    sectionEl.appendChild(img2);
+    sectionEl.appendChild(img3);
 }
 
-function render(){
-for(var i in allPictures){
-    var newLi = document.createElement('li');
-    newLi.textContent = numberOfClicks + "votes for the" + allPictures[i].name;
-    resultList.appendChild(newLi);
-    }   
-}
-
-function totalClicks (){
-if(numberOfClicks===25){
-    render();
-}
-}
 
 //Event Listener
-sectionEl.addEventListener(click, sectionCallBack);
-function sectionCallBack(event){
-    totalClicks();
+function onClick(event) {
+    console.log('here');
+    console.log(event);
+        totalClicks++;
 
-if(event.target.id){
-    totalClicks++;
-    allPictures[event.target.id].clicked++;
+    for (var i in allPictures){
+        if(event.target.alt === allPictures[i].name) {
+            allPictures[i].numberOfClicks++;
+        }
+    }
+
+    if(totalClicks === 6){
+        // return resultList;
+        console.log('maxVotes');
+        sectionEl.removeEventListener('click', onClick);
+        render();
+    }
 
     newPics();
-    {els{
-
-    }}
-}
+     
 }
 
-new Picture("img/bag.jpg", "bag");
-new Picture("img/banana.jpg", "banana");
-new Picture("img/bathroom.jpg", "bathroom");
-new Picture("img/boots.jpg", "boots");
-new Picture("img/breakfast.jpg", "breakfast");
-new Picture("img/bubblegum.jpg", "bubblegum");
-new Picture("img/chair.jpg", "chair");
-new Picture("img/cthulhu.jpg", "cthulhu");
-new Picture("img/dog-duck.jpg", "bag");
-new Picture("img/dragon.jpg", "dragon");
-new Picture("img/pen.jpg", "pen");
-new Picture("img/pet-sweep.jpg", "pet-sweep");
-new Picture("img/scissors.jpg", "scissors");
-new Picture("img/sweep.png", "sweep");
-new Picture("img/shark.jpg", "shark");
-new Picture("img/tauntaun.jpg", "tauntaun");
-new Picture("img/unicorn.jpg", "unicorn");
-new Picture("img/usb.gif", "usb");
-new Picture("img/water-can.jpg", "water-can");
-new Picture("img/wine-glass.jpg", "wine-glass");
+//rendering results
+function render() {
+    for (var i in allPictures) {
+        var newLi = document.createElement('li');
+        newLi.textContent = allPictures[i].numberOfClicks + " votes for the " + allPictures[i].name;
+        resultList.appendChild(newLi);
+    }
+}
+
+sectionEl.addEventListener('click', onClick);
+
+newPics();

@@ -1,3 +1,7 @@
-img{
+img {
     width: 30%;
+}
+
+#clickerBox {
+    border:2px solid red;
 }
