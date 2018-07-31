@@ -4,6 +4,8 @@
 var allPictures = [];
 var totalClicks = 0;
 var previousDisplays = [];
+var picNames = [];
+var clicksPerPix = [];
 
 //link JS to html
 var img1 = document.createElement('img');
@@ -16,7 +18,9 @@ function Pictures(url, name) {
     this.name = name;
     this.url = url;
     this.numberOfClicks = 0;
+    this.timesDisplayed = 0;
     allPictures.push(this);
+    picNames.push(this.name);
 }
 
 new Pictures("./img/bag.jpg", "bag");
@@ -57,12 +61,15 @@ function newPics() {
     }
     img1.src = allPictures[picIndex0].url;
     img1.alt = allPictures[picIndex0].name;
-
+    allPictures[picIndex0].timesDisplayed++;
+    
     img2.src = allPictures[picIndex1].url;
     img2.alt = allPictures[picIndex1].name;
-
+    allPictures[picIndex1].timesDisplayed++;
+    
     img3.src = allPictures[picIndex2].url;
     img3.alt = allPictures[picIndex2].name;
+    allPictures[picIndex2].timesDisplayed++;
 
     sectionEl.appendChild(img1);
     sectionEl.appendChild(img2);
@@ -91,9 +98,17 @@ function onClick(event) {
         console.log('maxVotes');
         sectionEl.removeEventListener('click', onClick);
         render();
+        voteTracker();
+        renderChartJs();
     }
 
     newPics();
+}
+
+function voteTracker (){
+    for(var i in allPictures){
+        clicksPerPix.push(allPictures[i].numberOfClicks)
+    }
 }
 
 //rendering results
@@ -103,6 +118,38 @@ function render() {
         newLi.textContent = allPictures[i].numberOfClicks + " votes for the " + allPictures[i].name;
         resultList.appendChild(newLi);
     }
+}
+//link JS to HTML to display/ render the voteChart and ctx or context is conventional name for chart functions  
+function renderChartJs (){
+    var ctx = document. getElementById('voteChart').getContext('2d');
+
+    var chartColors = ['#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67', '#614126', '#907A67'];
+
+  var busmallChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: picNames,
+      datasets: [{
+        label: 'Vote Result',
+        data: clicksPerPix,
+        backgroundColor: chartColors,
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            autoSkip: false
+          }
+        }]
+      }
+    }
+  });
 }
 
 sectionEl.addEventListener('click', onClick);
