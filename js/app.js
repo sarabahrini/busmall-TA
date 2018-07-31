@@ -13,6 +13,7 @@ var img2 = document.createElement('img');
 var img3 = document.createElement('img');
 var sectionEl = document.getElementById('clickerBox');
 var resultList = document.getElementById('voteResult');
+// var resultTitle = document.getElementsByTagName('h1');
 
 function Pictures(url, name) {
     this.name = name;
@@ -43,6 +44,15 @@ new Pictures("./img/unicorn.jpg", "unicorn");
 new Pictures("./img/usb.gif", "usb");
 new Pictures("./img/water-can.jpg", "water-can");
 new Pictures("./img/wine-glass.jpg", "wine-glass");
+
+function hideH1 (){
+    var resultTitle = document.getElementById('result-title');
+    resultTitle.style.display = "none";
+    if(totalClicks === 6){
+        resultTitle.style.display = "block";
+    }
+}
+hideH1();
 
 function getRandomPic() {
     return Math.floor(Math.random() * allPictures.length);
@@ -97,6 +107,7 @@ function onClick(event) {
         // return resultList;
         console.log('maxVotes');
         sectionEl.removeEventListener('click', onClick);
+        hideH1();
         render();
         voteTracker();
         renderChartJs();
