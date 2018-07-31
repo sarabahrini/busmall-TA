@@ -3,6 +3,7 @@
 //global variable
 var allPictures = [];
 var totalClicks = 0;
+var previousDisplays = [];
 
 //link JS to html
 var img1 = document.createElement('img');
@@ -39,7 +40,7 @@ new Pictures("./img/usb.gif", "usb");
 new Pictures("./img/water-can.jpg", "water-can");
 new Pictures("./img/wine-glass.jpg", "wine-glass");
 
-function getRandomPic(){
+function getRandomPic() {
     return Math.floor(Math.random() * allPictures.length);
 }
 
@@ -49,8 +50,10 @@ function newPics() {
     var picIndex1 = getRandomPic();
     var picIndex2 = getRandomPic();
 
-    if(picIndex0 === picIndex1 || picIndex0 === picIndex2 || picIndex1 === picIndex2){
-        newPics();
+    while (picIndex0 === picIndex1 || picIndex0 === picIndex2 || picIndex1 === picIndex2 || previousDisplays.includes(picIndex0) || previousDisplays.includes(picIndex1) || previousDisplays.includes(picIndex2)) {
+        var picIndex0 = getRandomPic();
+        var picIndex1 = getRandomPic();
+        var picIndex2 = getRandomPic();
     }
     img1.src = allPictures[picIndex0].url;
     img1.alt = allPictures[picIndex0].name;
@@ -60,26 +63,30 @@ function newPics() {
 
     img3.src = allPictures[picIndex2].url;
     img3.alt = allPictures[picIndex2].name;
-    
+
     sectionEl.appendChild(img1);
     sectionEl.appendChild(img2);
     sectionEl.appendChild(img3);
-}
 
+    previousDisplays = [];
+    previousDisplays.push(picIndex0);
+    previousDisplays.push(picIndex1);
+    previousDisplays.push(picIndex2);
+}
 
 //Event Listener
 function onClick(event) {
     console.log('here');
     console.log(event);
-        totalClicks++;
+    totalClicks++;
 
-    for (var i in allPictures){
-        if(event.target.alt === allPictures[i].name) {
+    for (var i in allPictures) {
+        if (event.target.alt === allPictures[i].name) {
             allPictures[i].numberOfClicks++;
         }
     }
 
-    if(totalClicks === 6){
+    if (totalClicks === 6) {
         // return resultList;
         console.log('maxVotes');
         sectionEl.removeEventListener('click', onClick);
@@ -87,7 +94,6 @@ function onClick(event) {
     }
 
     newPics();
-     
 }
 
 //rendering results
@@ -100,5 +106,4 @@ function render() {
 }
 
 sectionEl.addEventListener('click', onClick);
-
 newPics();
