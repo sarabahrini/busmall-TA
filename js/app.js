@@ -110,11 +110,13 @@ function onClick(event) {
         hideH1();
         render();
         voteTracker();
+        localStorageData();
         renderChartJs();
     }
 
     newPics();
 }
+
 
 function voteTracker (){
     for(var i in allPictures){
@@ -130,6 +132,27 @@ function render() {
         resultList.appendChild(newLi);
     }
 }
+
+
+//Local Storage - better to locate this at the bottom - local storage is the first step for data persistence 
+//When you send info to local storage you stringfy and hen you want to access it you parse it 
+function localStorageData (){
+    var collectedVotes = [];
+console.log(localStorage.storageContent);
+    if (localStorage.storageContent) {
+        console.log("localStorage exists");
+        for (var i in clicksPerPix){
+            collectedVotes[i] = clicksPerPix[i] + JSON.parse(localStorage.storageContent)[i];
+        }
+    }
+    else {
+        console.log("No localStorage");
+        collectedVotes = clicksPerPix;
+    }
+
+    localStorage.storageContent = JSON.stringify(collectedVotes);
+}
+
 //link JS to HTML to display/ render the voteChart and ctx or context is conventional name for chart functions  
 function renderChartJs (){
     var ctx = document. getElementById('voteChart').getContext('2d');
@@ -142,7 +165,7 @@ function renderChartJs (){
       labels: picNames,
       datasets: [{
         label: 'Vote Result',
-        data: clicksPerPix,
+        data: JSON.parse(localStorage.storageContent),
         backgroundColor: chartColors,
       }]
     },
